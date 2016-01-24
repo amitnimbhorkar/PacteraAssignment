@@ -1,44 +1,59 @@
 package com.assignment.controller;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.bitpipeline.lib.owm.OwmClient;
-import org.bitpipeline.lib.owm.WeatherData;
-import org.bitpipeline.lib.owm.WeatherStatusResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import com.assignment.dto.WeatherValueObject;
+import com.assignment.model.WeatherInput;
+import com.assignment.service.WeatherService;
 
 @Controller
 @RequestMapping("/weather")
 public class AssignmentController {
 
+	@Autowired(required=true)
+	private WeatherService weatherService;
+
+	public void setWeatherService(WeatherService weatherService) {
+		this.weatherService = weatherService;
+	}
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String getCurrentWeather(ModelMap model) throws Exception {
+		WeatherInput input = new WeatherInput();
 
-		WeatherValueObject weatherVO = new WeatherValueObject();
+		model.addAttribute("weather", input);
 
-		OwmClient owm = new OwmClient();
-
-		WeatherStatusResponse currentWeather = owm.currentWeatherAtCity("Melbourne", "AU");
-		if (currentWeather.hasWeatherStatus()) {
-			WeatherData weather = currentWeather.getWeatherStatus().get(0);
-
-			weatherVO.setTemperature(String.valueOf(weather.getTemp()));
-
-			weatherVO.setUpdatedTime(new Date(weather.getDateTime()));
-
-			weatherVO.setWind(((weather.getWindSpeed() * 18) / 5) + " km/h");
-
-			weatherVO.setWeather(weather.getWeatherConditions().get(0).getDescription());
-
-		}
-
-		model.addAttribute("message", "PFA data");
-		model.addAttribute("weatherVO", weatherVO);
 		return "Weather";
 	}
+
+	@ModelAttribute("cities")
+	public List<String> initializeCountries() {
+
+		List<String> cities = new ArrayList<String>();
+		cities.add("Melbourne");
+		cities.add("Sydney");
+		cities.add("Wollongong");
+		return cities;
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public String getWeatherAction(@RequestParam("city") String city, ModelMap model) throws Exception {
+
+		model.addAttribute("weatherVO", weatherService.retrieveWeatherData(city));
+
+		WeatherInput input = new WeatherInput();
+		input.setCity(city);
+		model.addAttribute("weather", input);
+
+		return "Weather";
+	}
+
 }
