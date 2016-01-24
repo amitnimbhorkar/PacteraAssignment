@@ -8,5 +8,10 @@
 </head>
 <body>
 <h2>${message}</h2>
+<h2>City : ${weatherVO.city}</h2>
+<h2>Updated TIme : ${weatherVO.updatedTime}</h2>
+<h2>Weather : ${weatherVO.weather}</h2>
+<h2>Temperature : ${weatherVO.temperature}</h2>
+<h2>Wind : ${weatherVO.wind}</h2>
 </body>
 </html>
