@@ -1,41 +1,21 @@
 package com.assignment.service;
 
-import java.util.Date;
-
-import org.bitpipeline.lib.owm.OwmClient;
-import org.bitpipeline.lib.owm.WeatherData;
-import org.bitpipeline.lib.owm.WeatherStatusResponse;
-
 import com.assignment.dto.WeatherValueObject;
+import com.assignment.factory.IWeatherDataSource;
+import com.assignment.factory.WeatherDataSourceFactory;
+import com.assignment.util.IApplicationConstants;
 
-public class WeatherServiceImpl implements WeatherService{
+public class WeatherServiceImpl implements IWeatherService {
+
+	private WeatherDataSourceFactory weatherDataSourceFactory;
+
+	public void setWeatherDataSourceFactory(WeatherDataSourceFactory weatherDataSourceFactory) {
+		this.weatherDataSourceFactory = weatherDataSourceFactory;
+	}
 
 	public WeatherValueObject retrieveWeatherData(String city) throws Exception {
-		WeatherValueObject weatherVO = new WeatherValueObject();
-
-		OwmClient owm = new OwmClient();
-
-		WeatherStatusResponse currentWeather = owm.currentWeatherAtCity(city);
-		if (currentWeather.hasWeatherStatus()) {
-
-			WeatherData weather = currentWeather.getWeatherStatus().get(0);
-
-			double celsius = ((weather.getTemp() - 32) * (5 / 9.0));
-
-			weatherVO.setTemperature(String.valueOf(celsius) + "\'C");
-
-			weatherVO.setUpdatedTime(new Date(weather.getDateTime()));
-
-			weatherVO.setWind(((weather.getWindSpeed() * 18) / 5) + " km/h");
-
-			weatherVO.setWeather(weather.getWeatherConditions().get(0).getDescription());
-
-			weatherVO.setCity(city);
-
-			System.out.println("Temp=" + weather.getTemp() + ", Time=" + weather.getDateTime() + ", Wind="
-					+ weather.getWindSpeed() + ", Desc=" + weather.getWeatherConditions().get(0).getDescription());
-		}
-
-		return weatherVO;
+		IWeatherDataSource weatherDataSource = weatherDataSourceFactory
+				.getWeatherDataSource(IApplicationConstants.OPEN_WEATHER_MAP_DATA_SOURCE);
+		return weatherDataSource.getWeatherData(city);
 	}
 }

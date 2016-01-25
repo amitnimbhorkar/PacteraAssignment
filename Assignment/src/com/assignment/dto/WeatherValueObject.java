@@ -8,11 +8,11 @@ public class WeatherValueObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String city;
-	private Date updatedTime;
+	private String updatedTime;
 	private String weather;
 	private String temperature;
 	private String wind;
-	
+
 	public String getCity() {
 		return city;
 	}
@@ -21,11 +21,11 @@ public class WeatherValueObject implements Serializable {
 		this.city = city;
 	}
 
-	public Date getUpdatedTime() {
+	public String getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Date updatedTime) {
+	public void setUpdatedTime(String updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 

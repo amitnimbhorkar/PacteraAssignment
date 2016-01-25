@@ -15,10 +15,23 @@
 		<property name="suffix" value=".jsp" />
 	</bean>
 
-	<!-- <bean class="com.assignment.controller.AssignmentController" id="controller"> -->
-	<!-- <property name="weatherService" ref="weatherService"></property> -->
-	<!-- </bean> -->
-	<bean class="com.assignment.service.WeatherServiceImpl" id="weatherService">
+
+	<bean id="weatherService" class="com.assignment.service.WeatherServiceImpl">
+		<property name="weatherDataSourceFactory" ref="weatherDataSourceFactory"></property>
+	</bean>
+
+	<bean id="weatherDataSourceFactory" class="com.assignment.factory.WeatherDataSourceFactory">
+		<property name="openWeatherMapSource" ref="owmSource"></property>
+		<property name="someOtherSource" ref="otherSource"></property>
+	</bean>
+
+	<bean id="otherSource" class="com.assignment.factory.SomeOtherSource">
+	</bean>
+
+	<bean id="owmSource" class="com.assignment.factory.OpenWeatherMapSource">
+		<property name="owmClient">
+			<bean id="owmClient" class="org.bitpipeline.lib.owm.OwmClient" />
+		</property>
 	</bean>
 
 </beans>

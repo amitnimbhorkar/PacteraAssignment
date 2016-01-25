@@ -1,9 +1,10 @@
 package com.assignment.controller;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,21 +13,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.assignment.model.WeatherInput;
-import com.assignment.service.WeatherService;
+import com.assignment.service.IWeatherService;
 
 @Controller
 @RequestMapping("/weather")
-public class AssignmentController {
+public class WeatherController {
 
-	@Autowired(required=true)
-	private WeatherService weatherService;
+	@Autowired(required = true)
+	private IWeatherService weatherService;
+	@Autowired(required = true)
+	private MessageSource messageSource;
 
-	public void setWeatherService(WeatherService weatherService) {
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
+	public void setWeatherService(IWeatherService weatherService) {
 		this.weatherService = weatherService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getCurrentWeather(ModelMap model) throws Exception {
+	public String initialiseFormBackingBean(ModelMap model) throws Exception {
 		WeatherInput input = new WeatherInput();
 
 		model.addAttribute("weather", input);
@@ -37,15 +44,12 @@ public class AssignmentController {
 	@ModelAttribute("cities")
 	public List<String> initializeCountries() {
 
-		List<String> cities = new ArrayList<String>();
-		cities.add("Melbourne");
-		cities.add("Sydney");
-		cities.add("Wollongong");
-		return cities;
+		return Arrays.asList(messageSource.getMessage("au.cities.list", null, null).split(","));
+
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String getWeatherAction(@RequestParam("city") String city, ModelMap model) throws Exception {
+	public String getCurentWeatherAction(@RequestParam("city") String city, ModelMap model) throws Exception {
 
 		model.addAttribute("weatherVO", weatherService.retrieveWeatherData(city));
 
