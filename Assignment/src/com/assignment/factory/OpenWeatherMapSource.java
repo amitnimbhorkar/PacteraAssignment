@@ -22,7 +22,7 @@ public class OpenWeatherMapSource implements IWeatherDataSource {
 
 		WeatherStatusResponse currentWeather = owmClient.currentWeatherAtCity(city,
 				IApplicationConstants.DEFAULT_COUNTRY);
-		if (currentWeather.hasWeatherStatus()) {
+		if (currentWeather!= null && currentWeather.hasWeatherStatus()) {
 
 			WeatherData weather = currentWeather.getWeatherStatus().get(0);
 
